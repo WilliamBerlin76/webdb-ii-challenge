@@ -42,4 +42,30 @@ router.post('/', (req, res) => {
         });
 });
 
+router.put('/:id', (req, res) => {
+    const edits = req.body;
+    Cars('specs')
+        .where({id: req.params.id})
+        .update(edits)
+        .then(count => {
+            res.status(200).json(count)
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({error: 'could not update the vehicle info'})
+        })   
+})
+router.delete('/:id', (req, res) => {
+    Cars('specs')
+        .where({id: req.params.id})
+        .del()
+        .then(car => {
+            res.status(200).json({message: `the vehicle at id ${req.params.id} was removed`})
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({error: 'could not remove the vehicle from the database'})
+        });
+});
+
 module.exports = router;
