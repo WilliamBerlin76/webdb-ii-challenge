@@ -1,5 +1,6 @@
 const express = require('express');
 const helmet = require('helmet');
+const cors = require('cors');
 
 const carsRouter = require('./data/carsRoute');
 
@@ -10,6 +11,7 @@ server.get('/', (req, res) => {
 })
 
 server.use(helmet());
+server.use(cors());
 server.use(express.json());
 
 server.use('/api/cars', carsRouter);
