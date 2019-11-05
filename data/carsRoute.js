@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
         });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', verifyVehicleId, (req, res) => {
     Cars
         .select('*')
         .from('specs')
@@ -29,7 +29,7 @@ router.get('/:id', (req, res) => {
         })
 })
 
-router.post('/', (req, res) => {
+router.post('/', verifyVehicleBody, (req, res) => {
     Cars
         .insert(req.body, 'id')
         .into('specs')
@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
         });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', verifyVehicleId, verifyVehicleBody, (req, res) => {
     const edits = req.body;
     Cars('specs')
         .where({id: req.params.id})
@@ -55,7 +55,7 @@ router.put('/:id', (req, res) => {
             res.status(500).json({error: 'could not update the vehicle info'})
         })   
 })
-router.delete('/:id', (req, res) => {
+router.delete('/:id', verifyVehicleId, (req, res) => {
     Cars('specs')
         .where({id: req.params.id})
         .del()
@@ -67,5 +67,40 @@ router.delete('/:id', (req, res) => {
             res.status(500).json({error: 'could not remove the vehicle from the database'})
         });
 });
+
+//////////////////////// MiddleWare ////////////////////////////
+
+function verifyVehicleId(req, res, next){
+    Cars
+        .select('*')
+        .from('specs')
+        .where('id', '=', req.params.id)
+        .first()
+        .then(car => {
+            console.log(car)
+            if (!car){
+                return res.status(404).json({message: `the vehicle with the id ${req.params.id} does not exist`})
+            } else {
+                next();
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({error: 'Could not verify the id of the vehicle'})
+        })
+};
+
+function verifyVehicleBody(req, res, next){
+    const body = req.body;
+
+    if (!body){
+        return res.status(400).json({message: 'please include a body'})
+    } else if (!body.VIN || !body.make || !body.model || !body.mileage){
+        return res.status(400).json({message: 'please include all required fields: VIN, make, model, and mileage'})
+    } else {
+        next();
+    }
+}
+
 
 module.exports = router;
