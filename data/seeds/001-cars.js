@@ -5,8 +5,8 @@ exports.seed = function(knex) {
     .then(function () {
       // Inserts seed entries
       return knex('specs').insert([
-        {id: 1, VIM: 835967, make: 'testing seeds', model: 'test model', mileage: 1254, type: 'new', status: 'nice'},
-        {id: 2, VIM: 14586, make: 'testing truncate', model: 'another one', mileage: 1}
+        {id: 1, VIN: 835967, make: 'testing seeds', model: 'test model', mileage: 1254, type: 'new', status: 'nice'},
+        {id: 2, VIN: 14586, make: 'testing truncate', model: 'another one', mileage: 1}
       ]);
     });
 };
